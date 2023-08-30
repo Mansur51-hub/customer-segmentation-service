@@ -1,0 +1,8 @@
+PG:
+  url: 'postgres://postgres:postgrespw@localhost:49154'
+
+Log:
+  level: 'debug'
+
+NET:
+  port: '8080'

@@ -1,0 +1,137 @@
+definitions:
+  handler.SegmentInfo:
+    properties:
+      slug:
+        maxLength: 255
+        minLength: 1
+        type: string
+      ttl:
+        type: string
+    required:
+    - slug
+    type: object
+  handler.SegmentInputData:
+    properties:
+      slug:
+        maxLength: 255
+        minLength: 1
+        type: string
+    required:
+    - slug
+    type: object
+  handler.UserSegmentsInputData:
+    properties:
+      segments_to_add:
+        items:
+          $ref: '#/definitions/handler.SegmentInfo'
+        maxItems: 10
+        type: array
+      segments_to_delete:
+        items:
+          type: string
+        maxItems: 10
+        type: array
+      user_id:
+        type: integer
+    required:
+    - segments_to_add
+    - segments_to_delete
+    type: object
+  model.Segment:
+    properties:
+      id:
+        type: integer
+      slug:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: mansyr001mamedov@mail.ru
+    name: Mansur Mamedov
+  description: swagger
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: customer segmentation service
+  version: "1.0"
+paths:
+  /segments:
+    delete:
+      consumes:
+      - application/json
+      description: Delete segment
+      parameters:
+      - description: Segment slug
+        in: body
+        name: slug
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SegmentInputData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete segment
+      tags:
+      - segments
+    post:
+      consumes:
+      - application/json
+      description: Create new segment
+      parameters:
+      - description: Segment slug
+        in: body
+        name: slug
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SegmentInputData'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: segment
+          schema:
+            $ref: '#/definitions/model.Segment'
+        "400":
+          description: Bad Request
+        "409":
+          description: Conflict
+        "500":
+          description: Internal Server Error
+      summary: Create new segment
+      tags:
+      - segments
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create new user segments
+      parameters:
+      - description: segments info
+        in: body
+        name: segment
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UserSegmentsInputData'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "409":
+          description: Conflict
+      summary: Create new user segments
+      tags:
+      - users
+swagger: "2.0"
