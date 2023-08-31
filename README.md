@@ -185,9 +185,10 @@ curl -X 'GET' \
 ```
 
 Пример ответа:
-```val
+```
 1000,AVITO_DISCOUNT_50,adding,Thu Aug 31 21:08:07 2023
 1000,AVITO_VOICE_MESSAGES,adding,Thu Aug 31 21:08:07 2023
 1000,AVITO_PERFORMANCE_VAS,adding,Thu Aug 31 21:08:07 2023
 1000,AVITO_DISCOUNT_50,removing,Thu Aug 31 21:08:07 2023
 ```
+
