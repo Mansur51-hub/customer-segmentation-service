@@ -101,7 +101,7 @@ info:
   version: "1.0"
 paths:
   /operations:
-    post:
+    get:
       consumes:
       - application/json
       description: Get operations by year by month

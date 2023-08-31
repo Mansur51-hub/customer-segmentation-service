@@ -108,12 +108,12 @@ func (r *UserRepo) GetSample(ctx context.Context, percent int) ([]int, error) {
 		return nil, err
 	}
 
-	val := count * percent / 100
+	val := float64(percent) / 100.0
 
 	sql, args, _ = r.pg.Sq.Select("*").
 		From("users").
-		Where("random() < 0.5").
-		Limit(uint64(val)).
+		Where("random() < ?", val).
+		Limit(uint64(float64(count) * val)).
 		ToSql()
 
 	res, err := r.pg.Pool.Query(ctx, sql, args...)
@@ -122,7 +122,7 @@ func (r *UserRepo) GetSample(ctx context.Context, percent int) ([]int, error) {
 		return nil, err
 	}
 
-	users := make([]int, 0, val)
+	users := make([]int, 0, count)
 
 	for res.Next() {
 		var id int

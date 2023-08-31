@@ -9,9 +9,8 @@ import (
 	"github.com/Mansur51-hub/customer-segmentation-service/pkg/postgres"
 	"github.com/Mansur51-hub/customer-segmentation-service/repository"
 	"github.com/Mansur51-hub/customer-segmentation-service/service"
-	"github.com/gorilla/mux"
 	"github.com/rs/zerolog/log"
-	httpSwagger "github.com/swaggo/http-swagger"
+	oslog "log"
 	"net"
 	"net/http"
 )
@@ -36,24 +35,24 @@ func Run(configPath string) {
 
 	defer pg.Close()
 
+	log.Info().Msg("initiating repositories...")
 	repos := repository.NewRepositories(pg)
 
+	log.Info().Msg("initiating services...")
 	// service
 	serv := service.NewServices(repos)
-
 	// init ttl service
-
 	serv.TtlService.Exec(context.Background())
 
+	log.Info().Msg("initiating handler...")
 	// handler
 	h := handler.NewHandler(serv)
 
-	router := mux.NewRouter()
-	router.HandleFunc("/users", h.CreateUserSegments).Methods("POST")
-	router.HandleFunc("/users", h.GetUserSegments).Methods("GET")
-	router.HandleFunc("/segments", h.CreateSegment).Methods("POST")
-	router.HandleFunc("/segments", h.DeleteSegment).Methods("DELETE")
-	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
-	router.HandleFunc("/operations", h.GetOperations).Methods("POST")
-	http.ListenAndServe(net.JoinHostPort("", cfg.Port), router)
+	// router
+	log.Info().Msg("initiating router")
+
+	router := handler.NewRouter(h)
+
+	log.Info().Str("port", cfg.Port).Msg("starting listen server")
+	oslog.Fatal(http.ListenAndServe(net.JoinHostPort("", cfg.Port), router.Router))
 }

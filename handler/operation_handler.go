@@ -24,7 +24,7 @@ type OperationInputData struct {
 // @Failure      400
 // @Failure      500
 // @Param        time body handler.OperationInputData true "time"
-// @Router       /operations [post]
+// @Router       /operations [get]
 func (h *Handler) GetOperations(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 

@@ -25,7 +25,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/operations": {
-            "post": {
+            "get": {
                 "description": "Get operations by year by month",
                 "consumes": [
                     "application/json"
