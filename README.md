@@ -161,7 +161,7 @@ curl -X 'GET' \
   "user_id": 1000
 }'
 ```
-Пример ответа, с указанием id резервирования:
+Пример ответа:
 ```json
 ["AVITO_PERFORMANCE_VAS","AVITO_VOICE_MESSAGES"]
 ```
