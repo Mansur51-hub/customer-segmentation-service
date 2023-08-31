@@ -11,7 +11,7 @@ import (
 
 type SegmentInputData struct {
 	Slug    string `json:"slug" validate:"required,min=1,max=255"`
-	Percent int    `json:"percent,omitempty" validate:"min=1,max=100"`
+	Percent int    `json:"percent,omitempty" validate:"min=0,max=100"`
 }
 
 // CreateSegment             godoc
