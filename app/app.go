@@ -15,15 +15,15 @@ import (
 	"net/http"
 )
 
-func Run(configPath string) {
-	cfg, err := config.NewConfig(configPath)
+func Run() {
+	cfg, err := config.NewConfig()
 
 	if err != nil {
 		log.Fatal().Err(err).Msg("config")
 	}
 
 	// logger
-	logger.SetLevel(cfg.Log.Level)
+	logger.SetLevel(cfg.Level)
 
 	// postgres
 	log.Info().Msg("connecting to postgres...")

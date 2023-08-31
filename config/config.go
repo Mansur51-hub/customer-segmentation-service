@@ -2,35 +2,24 @@ package config
 
 import (
 	"fmt"
+	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
 )
 
-type Net struct {
-	Port string `yaml:"port"`
-}
-
-type PG struct {
-	Url string `yaml:"url"`
-}
-
-type Log struct {
-	Level string `yaml:"level"`
-}
-
 type Config struct {
-	Net `yaml:"NET"`
-	PG  `yaml:"PG"`
-	Log `yaml:"LOG"`
+	Port  string `yaml:"port" mapstructure:"http_port"`
+	Url   string `yaml:"url" mapstructure:"pg_url"`
+	Level string `yaml:"level" mapstructure:"log_level"`
 }
 
-func NewConfig(path string) (cfg *Config, err error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
+func NewConfig() (cfg *Config, err error) {
+	viper.AutomaticEnv()
 
-	viper.SetDefault("LOG.level", "debug")
+	viper.SetConfigFile(".env")
 
 	cfg = &Config{}
+
+	var result map[string]interface{}
 
 	err = viper.ReadInConfig()
 
@@ -38,10 +27,18 @@ func NewConfig(path string) (cfg *Config, err error) {
 		return nil, fmt.Errorf("error reading config: %w", err)
 	}
 
-	err = viper.Unmarshal(&cfg)
+	err = viper.Unmarshal(&result)
+
+	err = mapstructure.Decode(result, &cfg)
 
 	if err != nil {
 		return nil, fmt.Errorf("error marshalling config: %w", err)
+	}
+
+	_ = viper.BindEnv("isLocal", "IS_DOCKER_RUN")
+
+	if !viper.GetBool("isLocal") {
+		cfg.Url = viper.GetString("pg_local_url")
 	}
 
 	return cfg, nil

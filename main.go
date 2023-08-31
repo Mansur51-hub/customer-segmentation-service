@@ -4,8 +4,6 @@ import (
 	"github.com/Mansur51-hub/customer-segmentation-service/app"
 )
 
-const configPath = "./config"
-
 // @title customer segmentation service
 // @version 1.0
 // @description swagger
@@ -17,5 +15,5 @@ const configPath = "./config"
 // @host localhost:8080
 // @BasePath
 func main() {
-	app.Run(configPath)
+	app.Run()
 }
