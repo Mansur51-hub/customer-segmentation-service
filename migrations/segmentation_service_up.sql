@@ -29,6 +29,3 @@ create table memberships
     foreign key (segment_slug) references segments (slug),
     UNIQUE (user_id, segment_slug)
 );
-
-select m.segment_slug from memberships as m
-where m.user_id = 3 and (m.expired_at is null or m.expired_at >= now())

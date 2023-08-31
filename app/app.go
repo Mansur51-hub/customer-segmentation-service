@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"github.com/Mansur51-hub/customer-segmentation-service/config"
 	_ "github.com/Mansur51-hub/customer-segmentation-service/docs"
 	"github.com/Mansur51-hub/customer-segmentation-service/handler"
@@ -35,18 +36,24 @@ func Run(configPath string) {
 
 	defer pg.Close()
 
-	rep := repository.NewPostgresRepository(pg)
+	repos := repository.NewRepositories(pg)
 
 	// service
-	serv := service.NewMyService(rep)
+	serv := service.NewServices(repos)
+
+	// init ttl service
+
+	serv.TtlService.Exec(context.Background())
 
 	// handler
 	h := handler.NewHandler(serv)
 
 	router := mux.NewRouter()
 	router.HandleFunc("/users", h.CreateUserSegments).Methods("POST")
+	router.HandleFunc("/users", h.GetUserSegments).Methods("GET")
 	router.HandleFunc("/segments", h.CreateSegment).Methods("POST")
 	router.HandleFunc("/segments", h.DeleteSegment).Methods("DELETE")
 	router.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
+	router.HandleFunc("/operations", h.GetOperations).Methods("POST")
 	http.ListenAndServe(net.JoinHostPort("", cfg.Port), router)
 }

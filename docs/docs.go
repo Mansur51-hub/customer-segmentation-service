@@ -24,6 +24,43 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/operations": {
+            "post": {
+                "description": "Get operations by year by month",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "operations"
+                ],
+                "summary": "Get operations by year by month",
+                "parameters": [
+                    {
+                        "description": "time",
+                        "name": "time",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.OperationInputData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
         "/segments": {
             "post": {
                 "description": "Create new segment",
@@ -85,7 +122,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handler.SegmentInputData"
+                            "$ref": "#/definitions/handler.SegmentDeleteData"
                         }
                     }
                 ],
@@ -106,6 +143,39 @@ const docTemplate = `{
             }
         },
         "/users": {
+            "get": {
+                "description": "Get user active segments",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Get user active segments",
+                "operationId": "Get user active segments by id",
+                "parameters": [
+                    {
+                        "description": "user id",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handler.UserGetSegmentsInputData"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
+                }
+            },
             "post": {
                 "description": "Create new user segments",
                 "consumes": [
@@ -121,7 +191,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "segments info",
-                        "name": "segment",
+                        "name": "segments",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -136,6 +206,9 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request"
                     },
+                    "404": {
+                        "description": "Not Found"
+                    },
                     "409": {
                         "description": "Conflict"
                     }
@@ -144,6 +217,41 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "handler.OperationInputData": {
+            "type": "object",
+            "required": [
+                "limit"
+            ],
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 1
+                },
+                "month": {
+                    "type": "integer"
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "handler.SegmentDeleteData": {
+            "type": "object",
+            "required": [
+                "slug"
+            ],
+            "properties": {
+                "slug": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 1
+                }
+            }
+        },
         "handler.SegmentInfo": {
             "type": "object",
             "required": [
@@ -166,10 +274,34 @@ const docTemplate = `{
                 "slug"
             ],
             "properties": {
+                "percent": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
                 "slug": {
                     "type": "string",
                     "maxLength": 255,
                     "minLength": 1
+                }
+            }
+        },
+        "handler.UserGetSegmentsInputData": {
+            "type": "object",
+            "required": [
+                "limit"
+            ],
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "maximum": 10,
+                    "minimum": 1
+                },
+                "offset": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -203,6 +335,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "id": {
+                    "type": "integer"
+                },
+                "percent": {
                     "type": "integer"
                 },
                 "slug": {

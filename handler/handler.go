@@ -8,12 +8,12 @@ import (
 )
 
 type Handler struct {
-	serv     *service.MyService
+	serv     *service.Services
 	validate *validator.Validate
 }
 
-func NewHandler(service *service.MyService) *Handler {
-	return &Handler{serv: service, validate: validator.New()}
+func NewHandler(services *service.Services) *Handler {
+	return &Handler{serv: services, validate: validator.New()}
 }
 
 func NewResponse(w http.ResponseWriter, status int, msg any) {

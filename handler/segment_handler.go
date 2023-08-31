@@ -10,7 +10,8 @@ import (
 )
 
 type SegmentInputData struct {
-	Slug string `json:"slug" validate:"required,min=1,max=255"`
+	Slug    string `json:"slug" validate:"required,min=1,max=255"`
+	Percent int    `json:"percent,omitempty" validate:"min=1,max=100"`
 }
 
 // CreateSegment             godoc
@@ -51,9 +52,9 @@ func (h *Handler) CreateSegment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	seg, err := h.serv.CreateSegment(r.Context(), segment.Slug)
+	seg, err := h.serv.CreateSegment(r.Context(), segment.Slug, segment.Percent)
 
-	if errors.As(err, &repoerrs.ErrAlreadyExists) {
+	if errors.Is(err, repoerrs.ErrAlreadyExists) {
 		NewResponse(w, http.StatusConflict, repoerrs.ErrAlreadyExists.Error())
 		return
 	}
@@ -66,6 +67,10 @@ func (h *Handler) CreateSegment(w http.ResponseWriter, r *http.Request) {
 	NewResponse(w, http.StatusCreated, seg)
 }
 
+type SegmentDeleteData struct {
+	Slug string `json:"slug" validate:"required,min=1,max=255"`
+}
+
 // DeleteSegment             godoc
 // @Summary      Delete segment
 // @Description  Delete segment
@@ -76,7 +81,7 @@ func (h *Handler) CreateSegment(w http.ResponseWriter, r *http.Request) {
 // @Failure      400
 // @Failure      404
 // @Failure      500
-// @Param        slug body handler.SegmentInputData true "Segment slug"
+// @Param        slug body handler.SegmentDeleteData true "Segment slug"
 // @Router       /segments [delete]
 func (h *Handler) DeleteSegment(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -87,7 +92,7 @@ func (h *Handler) DeleteSegment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var segment SegmentInputData
+	var segment SegmentDeleteData
 
 	err = json.Unmarshal(body, &segment)
 
@@ -106,7 +111,7 @@ func (h *Handler) DeleteSegment(w http.ResponseWriter, r *http.Request) {
 
 	err = h.serv.DeleteSegment(r.Context(), segment.Slug)
 
-	if errors.As(err, &repoerrs.ErrNotExists) {
+	if errors.Is(err, repoerrs.ErrNotExists) {
 		NewResponse(w, http.StatusNotFound, repoerrs.ErrNotExists.Error())
 		return
 	}

@@ -1,5 +1,5 @@
 PG:
-  url: 'postgres://postgres:postgrespw@localhost:49154'
+  url: 'postgres://postgres:postgrespw@localhost:49153'
 
 Log:
   level: 'debug'
